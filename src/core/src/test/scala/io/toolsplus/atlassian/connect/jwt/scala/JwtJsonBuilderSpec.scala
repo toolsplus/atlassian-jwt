@@ -29,7 +29,7 @@ class JwtJsonBuilderSpec extends TestSpec {
 
     "used to build a JWT" should {
 
-      "create a JWT claims with default lifetime if no arguments are given" in {
+      "create JWT claims with default lifetime if no arguments are given" in {
         val now = Instant.now
         val result = JwtJsonBuilder().build
 

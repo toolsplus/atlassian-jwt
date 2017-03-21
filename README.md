@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/toolsplus/atlassian-jwt.svg?branch=master)](https://travis-ci.org/toolsplus/atlassian-jwt)
 [![codecov](https://codecov.io/gh/toolsplus/atlassian-jwt/branch/master/graph/badge.svg)](https://codecov.io/gh/toolsplus/atlassian-jwt)
+[![Maven Central](https://img.shields.io/maven-central/v/io.toolsplus/atlassian-jwt-core_2.11.svg)](https://maven-badges.herokuapp.com/maven-central/io.toolsplus/atlassian-jwt-core_2.11)
 
 Utilities to read, validate and generate valid Atlassian JWTs. Atlassian tokens
 are identical to regular JWTs with the exception of a few custom claims, such as `qsh` claim.
