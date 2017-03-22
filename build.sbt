@@ -46,17 +46,17 @@ lazy val noPublishSettings = Seq(
     Resolver.file("Unused transient repository", file("target/dummyrepo")))
 )
 
-def moduleSettings(projectName: String, moduleName: String) = {
-  def toSnakeCase(s: String) = s.toLowerCase.replace(" ", "-")
+def moduleSettings(project: Project) = {
   Seq(
-    description := s"${toSnakeCase(projectName)}-${toSnakeCase(moduleName)}",
-    name := s"$projectName $moduleName"
+    description := project.id.split("-").map(_.capitalize).mkString(" "),
+    name := project.id
   )
 }
 
 val projectName = "Atlassian JWT"
 
-lazy val `atlassian-jwt-root` = (project in file("."))
+lazy val `atlassian-jwt` = project
+  .in(file("."))
   .aggregate(
     `atlassian-jwt-api`,
     `atlassian-jwt-generators`,
@@ -66,24 +66,24 @@ lazy val `atlassian-jwt-root` = (project in file("."))
   .settings(noPublishSettings)
 
 lazy val `atlassian-jwt-api` = project
-  .in(file("src/api"))
+  .in(file("modules/api"))
   .settings(commonSettings)
   .settings(publishSettings)
-  .settings(moduleSettings(projectName, "API"))
+  .settings(moduleSettings(project))
 
 lazy val `atlassian-jwt-generators` = project
-  .in(file("src/generators"))
+  .in(file("modules/generators"))
   .settings(libraryDependencies ++= Dependencies.generators)
   .settings(commonSettings)
   .settings(publishSettings)
-  .settings(moduleSettings(projectName, "Generators"))
+  .settings(moduleSettings(project))
   .dependsOn(`atlassian-jwt-api`)
 
 lazy val `atlassian-jwt-core` = project
-  .in(file("src/core"))
+  .in(file("modules/core"))
   .settings(libraryDependencies ++= Dependencies.core)
   .settings(commonSettings)
   .settings(publishSettings)
-  .settings(moduleSettings(projectName, "Core"))
+  .settings(moduleSettings(project))
   .dependsOn(`atlassian-jwt-api`)
   .dependsOn(`atlassian-jwt-generators` % "test")
