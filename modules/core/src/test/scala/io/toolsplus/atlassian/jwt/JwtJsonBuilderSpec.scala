@@ -12,6 +12,7 @@ import org.scalatest.Assertion
 class JwtJsonBuilderSpec extends TestSpec {
 
   private val leewaySeconds = 30
+  private val toleranceSeconds = 1
 
   private val issuedAt = root.iat.long
   private val expiry = root.exp.long
@@ -35,7 +36,9 @@ class JwtJsonBuilderSpec extends TestSpec {
         def assertion(json: Json) = {
           val defaultLifetime = JwtJsonBuilder.DEFAULT_JWT_LIFETIME.getSeconds
           val expectedExpiry = Instant.now plusSeconds defaultLifetime
-          issuedAt.getOption(json).getOrElse(fail) mustBe now.getEpochSecond
+          issuedAt
+            .getOption(json)
+            .getOrElse(fail) mustBe now.getEpochSecond +- toleranceSeconds
           expiry
             .getOption(json)
             .getOrElse(fail) mustBe expectedExpiry.getEpochSecond +- leewaySeconds
@@ -52,7 +55,7 @@ class JwtJsonBuilderSpec extends TestSpec {
           val expectedExpiry = Instant.now plus expireAfter
           expiry
             .getOption(json)
-            .getOrElse(fail) mustBe expectedExpiry.getEpochSecond +- 1
+            .getOrElse(fail) mustBe expectedExpiry.getEpochSecond +- toleranceSeconds
         }
 
         validate(assertion)(result)
@@ -69,7 +72,7 @@ class JwtJsonBuilderSpec extends TestSpec {
         def assertion(json: Json) = {
           expiry
             .getOption(json)
-            .getOrElse(fail) mustBe expectedExpiry.getEpochSecond +- 1
+            .getOrElse(fail) mustBe expectedExpiry.getEpochSecond +- toleranceSeconds
         }
 
         validate(assertion)(result)
@@ -85,7 +88,7 @@ class JwtJsonBuilderSpec extends TestSpec {
         def assertion(json: Json) = {
           issuedAt
             .getOption(json)
-            .getOrElse(fail) mustBe expectedIssueTime +- 1
+            .getOrElse(fail) mustBe expectedIssueTime +- toleranceSeconds
         }
 
         validate(assertion)(result)
@@ -138,7 +141,7 @@ class JwtJsonBuilderSpec extends TestSpec {
         def assertion(json: Json) = {
           notBefore
             .getOption(json)
-            .getOrElse(fail) mustBe expectedNotBefore.getEpochSecond +- 1
+            .getOrElse(fail) mustBe expectedNotBefore.getEpochSecond +- toleranceSeconds
         }
 
         validate(assertion)(result)
