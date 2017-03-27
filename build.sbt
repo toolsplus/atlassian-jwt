@@ -53,8 +53,6 @@ def moduleSettings(project: Project) = {
   )
 }
 
-val projectName = "Atlassian JWT"
-
 lazy val `atlassian-jwt` = project
   .in(file("."))
   .aggregate(
