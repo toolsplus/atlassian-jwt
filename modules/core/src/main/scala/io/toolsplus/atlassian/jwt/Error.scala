@@ -43,7 +43,7 @@ final case class JwtSignatureMismatchError(message: String)
   * If an expected claim is missing or the value of a reserved claim did not
   * match its expected format.
   */
-final case class JwtInvalidClaimError(message: String = null)
+final case class JwtInvalidClaimError(message: String)
     extends Error
     with JwtVerificationError {
   override def getMessage: String = message

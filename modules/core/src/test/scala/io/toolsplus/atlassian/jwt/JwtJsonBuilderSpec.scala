@@ -34,7 +34,7 @@ class JwtJsonBuilderSpec extends TestSpec {
         val result = JwtJsonBuilder().build
 
         def assertion(json: Json) = {
-          val defaultLifetime = JwtJsonBuilder.DEFAULT_JWT_LIFETIME.getSeconds
+          val defaultLifetime = JwtJsonBuilder.DefaultJwtLifetime.getSeconds
           val expectedExpiry = Instant.now plusSeconds defaultLifetime
           issuedAt
             .getOption(json)
@@ -211,7 +211,7 @@ class JwtJsonBuilderSpec extends TestSpec {
   private def validate(assertion: Json => Assertion)(result: String) = {
     parse(result) match {
       case Right(json) => assertion(json)
-      case Left(e) => fail(e.message, e)
+      case Left(e)     => fail(e.message, e)
     }
   }
 

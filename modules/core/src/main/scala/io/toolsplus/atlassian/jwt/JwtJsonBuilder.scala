@@ -8,10 +8,10 @@ import net.minidev.json.JSONObject
 import scala.collection.JavaConverters._
 
 object JwtJsonBuilder {
-  private[jwt] val DEFAULT_JWT_LIFETIME =
+  private[jwt] val DefaultJwtLifetime =
     Duration.of(180L, ChronoUnit.SECONDS)
 
-  def apply() = new JwtJsonBuilder(DEFAULT_JWT_LIFETIME)
+  def apply() = new JwtJsonBuilder(DefaultJwtLifetime)
 }
 
 class JwtJsonBuilder(val expireAfter: Duration) {

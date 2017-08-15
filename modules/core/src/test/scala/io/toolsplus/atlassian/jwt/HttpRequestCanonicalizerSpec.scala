@@ -17,7 +17,7 @@ class HttpRequestCanonicalizerSpec
       "compute the correct canonical request string" in forAll(
         canonicalHttpRequestGen) { request =>
         def partsOf(r: String) =
-          r.split(HttpRequestCanonicalizer.CANONICAL_REQUEST_PART_SEPARATOR)
+          r.split(HttpRequestCanonicalizer.CanonicalRequestPartSeparator)
         val canonicalizedRequest =
           HttpRequestCanonicalizer.canonicalize(request)
         if (canonicalizedRequest.endsWith("&"))
@@ -37,7 +37,7 @@ class HttpRequestCanonicalizerSpec
           HttpRequestCanonicalizer.canonicalizeUri(request)
         canonicalizedUri must startWith("/")
         if (canonicalizedUri.length > 1) canonicalizedUri must not endWith "/"
-        canonicalizedUri must not contain HttpRequestCanonicalizer.CANONICAL_REQUEST_PART_SEPARATOR
+        canonicalizedUri must not contain HttpRequestCanonicalizer.CanonicalRequestPartSeparator
       }
 
       "successfully compute canonical request hash" in forAll(

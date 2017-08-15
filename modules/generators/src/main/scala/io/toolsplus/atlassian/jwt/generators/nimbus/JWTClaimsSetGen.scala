@@ -31,5 +31,4 @@ trait JWTClaimsSetGen {
       customClaims
         .foldLeft(builder)((b, claim) => b.claim(claim._1, claim._2))
         .build()
-
 }
