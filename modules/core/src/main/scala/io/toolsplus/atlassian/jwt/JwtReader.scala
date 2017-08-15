@@ -112,13 +112,13 @@ case class JwtReader(sharedSecret: String) {
       now: Instant,
       claims: JWTClaimsSet): Either[Error, JWTClaimsSet] = {
     val nowPlusLeeway =
-      now.plusSeconds(JwtReader.TIME_CLAIM_LEEWAY_SECONDS)
+      now.plusSeconds(JwtReader.TimeClaimLeewaySeconds)
     if (Option(claims.getNotBeforeTime).isDefined && claims.getNotBeforeTime.toInstant
           .isAfter(nowPlusLeeway)) {
       Left(
         JwtTooEarlyError(claims.getNotBeforeTime.toInstant,
                          now,
-                         JwtReader.TIME_CLAIM_LEEWAY_SECONDS))
+                         JwtReader.TimeClaimLeewaySeconds))
     } else {
       Right(claims)
     }
@@ -134,12 +134,12 @@ case class JwtReader(sharedSecret: String) {
       now: Instant,
       claims: JWTClaimsSet): Either[Error, JWTClaimsSet] = {
     val nowMinusLeeway =
-      now.minusSeconds(JwtReader.TIME_CLAIM_LEEWAY_SECONDS)
+      now.minusSeconds(JwtReader.TimeClaimLeewaySeconds)
     if (claims.getExpirationTime.toInstant.isBefore(nowMinusLeeway)) {
       Left(
         JwtExpiredError(claims.getExpirationTime.toInstant,
                         now,
-                        JwtReader.TIME_CLAIM_LEEWAY_SECONDS))
+                        JwtReader.TimeClaimLeewaySeconds))
     } else {
       Right(claims)
     }
@@ -156,13 +156,12 @@ case class JwtReader(sharedSecret: String) {
       claims: JWTClaimsSet,
       queryStringHash: String): Either[Error, JWTClaimsSet] = {
     val maybeExtractedQueryStringHash =
-      Option(
-        claims.getClaim(HttpRequestCanonicalizer.QUERY_STRING_HASH_CLAIM_NAME))
+      Option(claims.getClaim(HttpRequestCanonicalizer.QueryStringHashClaimName))
     maybeExtractedQueryStringHash match {
       case Some(extractedQueryStringHash) =>
         if (queryStringHash != extractedQueryStringHash) {
           Left(JwtInvalidClaimError(
-            s"Expecting claim '${HttpRequestCanonicalizer.QUERY_STRING_HASH_CLAIM_NAME}' to have value '$queryStringHash' but instead it has the value '$maybeExtractedQueryStringHash'"))
+            s"Expecting claim '${HttpRequestCanonicalizer.QueryStringHashClaimName}' to have value '$queryStringHash' but instead it has the value '$maybeExtractedQueryStringHash'"))
         } else Right(claims)
       case None => Right(claims)
     }
@@ -192,6 +191,6 @@ object JwtReader {
     * time-based claims that are marginally before or after the current time
     * being accepted instead of rejected.
     */
-  private val TIME_CLAIM_LEEWAY_SECONDS: Int = 30
+  private val TimeClaimLeewaySeconds: Int = 30
 
 }

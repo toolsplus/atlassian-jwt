@@ -58,7 +58,7 @@ import org.bouncycastle.util.encoders.Hex
   */
 object HttpRequestCanonicalizer {
 
-  val QUERY_STRING_HASH_CLAIM_NAME: String = "qsh"
+  val QueryStringHashClaimName: String = "qsh"
 
   /**
     * When the JWT message is specified in the query string of a URL then this is the parameter name.
@@ -69,23 +69,23 @@ object HttpRequestCanonicalizer {
     * .cDihfcsKW_We_EY21tIs55dVwjU
     * </pre>
     */
-  private val JWT_PARAM_NAME: String = "jwt"
+  private val JwtParamName: String = "jwt"
 
   /**
     * Query parameter separator as it appears between "value1" and "param2" in the URL
     * "http://server/path?param1=value1&amp;param2=value2".
     */
-  private val QUERY_PARAMS_SEPARATOR: Char = '&'
+  private val QueryParamsSeparator: Char = '&'
 
   /**
     * The character between "a" and "b%20c" in "some_param=a,b%20c"
     */
-  private val ENCODED_PARAM_VALUE_SEPARATOR: String = ","
+  private val EncodedParamValueSeparator: String = ","
 
   /**
     * For separating the method, URI etc in a canonical request string.
     */
-  private[jwt] val CANONICAL_REQUEST_PART_SEPARATOR: Char = '&'
+  private[jwt] val CanonicalRequestPartSeparator: Char = '&'
 
   /**
     * Assemble the components of the HTTP request into the correct format so that they can be signed or hashed.
@@ -95,8 +95,8 @@ object HttpRequestCanonicalizer {
     * @throws UnsupportedEncodingException [[UnsupportedEncodingException]] if the [[java.net.URLEncoder]] cannot encode the request's field's characters
     */
   def canonicalize(request: CanonicalHttpRequest): String =
-    s"${canonicalizeMethod(request)}$CANONICAL_REQUEST_PART_SEPARATOR" +
-      s"${canonicalizeUri(request)}$CANONICAL_REQUEST_PART_SEPARATOR" +
+    s"${canonicalizeMethod(request)}$CanonicalRequestPartSeparator" +
+      s"${canonicalizeUri(request)}$CanonicalRequestPartSeparator" +
       s"${canonicalizeQueryParameters(request)}"
 
   /**
@@ -141,7 +141,7 @@ object HttpRequestCanonicalizer {
     val path =
       if (pathWithoutTrailingSlash.isEmpty) "/" else pathWithoutTrailingSlash
 
-    val separatorAsString = CANONICAL_REQUEST_PART_SEPARATOR.toString
+    val separatorAsString = CanonicalRequestPartSeparator.toString
 
     // If the separator is not URL encoded then the following URLs have the same query-string-hash:
     //   https://djtest9.jira-dev.com/rest/api/2/project&a=b?x=y
@@ -154,13 +154,13 @@ object HttpRequestCanonicalizer {
 
   private[jwt] def canonicalizeQueryParameters(
       request: CanonicalHttpRequest): String = {
-    (request.parameterMap - JWT_PARAM_NAME).toSeq
+    (request.parameterMap - JwtParamName).toSeq
       .sortBy {
         case (key, values) =>
           s"${percentEncode(key)} ${percentEncode(values.mkString(","))}"
       }
       .map((percentEncodePair _).tupled)
-      .mkString(QUERY_PARAMS_SEPARATOR.toString)
+      .mkString(QueryParamsSeparator.toString)
   }
 
   /**
@@ -169,7 +169,7 @@ object HttpRequestCanonicalizer {
   private def percentEncodePair(key: String, values: Seq[String]): String = {
     val encKey = percentEncode(key)
     val encVal =
-      values.map(percentEncode).mkString(ENCODED_PARAM_VALUE_SEPARATOR)
+      values.map(percentEncode).mkString(EncodedParamValueSeparator)
     s"$encKey=$encVal"
   }
 
