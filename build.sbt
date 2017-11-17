@@ -1,7 +1,7 @@
 val commonSettings = Seq(
   organization := "io.toolsplus",
-  scalaVersion := "2.12.3",
-  crossScalaVersions := Seq("2.11.11", "2.12.3"),
+  scalaVersion := "2.12.4",
+  crossScalaVersions := Seq("2.11.12", "2.12.4"),
   resolvers ++= Seq(
     "Typesafe repository releases" at "http://repo.typesafe.com/typesafe/releases/",
     Resolver.sonatypeRepo("releases")
@@ -41,8 +41,8 @@ lazy val publishSettings = Seq(
 )
 
 lazy val noPublishSettings = Seq(
-  publish := (),
-  publishLocal := (),
+  publish := {},
+  publishLocal := {},
   publishArtifact := false,
   publishTo := Some(
     Resolver.file("Unused transient repository", file("target/dummyrepo")))
