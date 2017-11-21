@@ -19,7 +19,8 @@ object JwtParser {
     Try(JWSObject.parse(input)) match {
       case Success(jwsObject) => Right(jwsObject)
       case Failure(exception) =>
-        Left(ParsingFailure(exception.getMessage, exception))
+        val message = Option(exception.getMessage).getOrElse("Parsing JWS object failed")
+        Left(ParsingFailure(message, exception))
     }
   }
 
