@@ -33,18 +33,21 @@ object JwtParser {
   }
 
   final def claimParsingFailureDetails(exception: Throwable): String = {
-    if (exception.getMessage.startsWith(JwtParser.UnexpectedTypeMessagePrefix)) {
-      val claimName = exception.getMessage
-        .replace(JwtParser.UnexpectedTypeMessagePrefix, "")
-        .replaceAll("\"", "")
+    def toClaimName(message: String): String = message
+      .replace(JwtParser.UnexpectedTypeMessagePrefix, "")
+      .replaceAll("\"", "")
 
+    def failureDetails(claimName: String): String = {
       if (JwtParser.NumericClaimNames.contains(claimName))
         s"Expecting claim '$claimName' to be numeric but it is a string"
       else
         s"Perhaps a claim is of the wrong type (e.g. expecting integer but found string): ${exception.getMessage}"
-    } else {
-      exception.getMessage
     }
+
+    Option(exception.getMessage)
+      .filter(_.startsWith(JwtParser.UnexpectedTypeMessagePrefix))
+      .map(message => failureDetails(toClaimName(message)))
+      .getOrElse("Parsing claims failed")
   }
 
   private val UnexpectedTypeMessagePrefix: String =
