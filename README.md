@@ -11,7 +11,7 @@ are identical to regular JWTs with the exception of a few custom claims, such as
 
 atlassian-jwt is published to Maven Central for cross-built and published for Scala 2.11 and 2.12, so you can just add the following to your build:
 
-    libraryDependencies += "io.toolsplus" %% "atlassian-jwt" % "0.1.3"
+    libraryDependencies += "io.toolsplus" %% "atlassian-jwt" % "0.1.4"
 
 
 ### Read JWT
