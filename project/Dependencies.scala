@@ -21,10 +21,10 @@ object Dependencies {
 }
 
 object Version {
-  val cats = "1.2.0"
-  val nimbusJoseJwt = "6.0"
-  val bouncyCastle = "1.60"
-  val circe = "0.9.3"
+  val cats = "1.6.0"
+  val nimbusJoseJwt = "7.1"
+  val bouncyCastle = "1.61"
+  val circe = "0.11.0"
   val scalaTest = "3.0.5"
   val scalaCheck = "1.14.0"
   val scalaCheckDateTime = "0.2.5"
