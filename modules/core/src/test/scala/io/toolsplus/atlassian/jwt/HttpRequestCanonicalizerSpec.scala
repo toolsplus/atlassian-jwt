@@ -2,11 +2,9 @@ package io.toolsplus.atlassian.jwt
 
 import io.toolsplus.atlassian.jwt.generators.core.JwtGen
 import io.toolsplus.atlassian.jwt.generators.nimbus.NimbusGen
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
 
 class HttpRequestCanonicalizerSpec
     extends TestSpec
-    with GeneratorDrivenPropertyChecks
     with JwtGen
     with NimbusGen {
 

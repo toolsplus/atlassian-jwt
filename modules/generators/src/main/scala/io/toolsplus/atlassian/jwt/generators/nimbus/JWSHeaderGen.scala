@@ -6,7 +6,7 @@ import com.nimbusds.jose.{JWSAlgorithm, JWSHeader}
 import org.scalacheck.Gen
 import org.scalacheck.Gen._
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 trait JWSHeaderGen {
 
@@ -35,6 +35,6 @@ trait JWSHeaderGen {
     new JWSHeader.Builder(alg).build()
 
   private def compatibleAlgorithms(secret: String): Set[JWSAlgorithm] =
-    MACSigner.getCompatibleAlgorithms(ByteUtils.bitLength(secret.length)).toSet
+    MACSigner.getCompatibleAlgorithms(ByteUtils.bitLength(secret.length)).asScala.toSet
 
 }

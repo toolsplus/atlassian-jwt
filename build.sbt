@@ -2,10 +2,10 @@ import ReleaseTransformations._
 
 val commonSettings = Seq(
   organization := "io.toolsplus",
-  scalaVersion := "2.12.6",
-  crossScalaVersions := Seq("2.11.12", "2.12.6"),
+  scalaVersion := "2.13.2",
+  crossScalaVersions := Seq("2.12.11", "2.13.2"),
   resolvers ++= Seq(
-    "Typesafe repository releases" at "http://repo.typesafe.com/typesafe/releases/",
+    "Typesafe repository releases" at "https://repo.typesafe.com/typesafe/releases/",
     Resolver.sonatypeRepo("releases")
   )
 )
@@ -14,7 +14,7 @@ lazy val publishSettings = Seq(
   releasePublishArtifactsAction := PgpKeys.publishSigned.value,
   homepage := Some(url("https://github.com/toolsplus/atlassian-jwt")),
   licenses := Seq(
-    "Apache 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
+    "Apache 2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0")),
   publishMavenStyle := true,
   publishArtifact in Test := false,
   pomIncludeRepository := { _ =>
@@ -37,7 +37,7 @@ lazy val publishSettings = Seq(
   developers := List(
     Developer("tbinna",
               "Tobias Binna",
-              "tobias.binna@toolsplus.ch",
+              "tobias.binna@toolsplus.io",
               url("https://twitter.com/tbinna"))
   )
 )
