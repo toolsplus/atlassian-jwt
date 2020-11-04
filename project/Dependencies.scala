@@ -26,7 +26,7 @@ object Version {
   val nimbusJoseJwt = "8.17.1"
   val bouncyCastle = "1.65"
   val circe = "0.13.0"
-  val scalaTest = "3.1.2"
+  val scalaTest = "3.1.4"
   val scalaCheck = "1.14.3"
   val scalaTestPlusScalaCheck = "3.1.2.0"
   val scalaCheckDateTime = "0.3.5"
