@@ -29,7 +29,7 @@ object Version {
   val scalaTest = "3.1.2"
   val scalaCheck = "1.15.0"
   val scalaTestPlusScalaCheck = "3.1.2.0"
-  val scalaCheckDateTime = "0.3.5"
+  val scalaCheckDateTime = "0.4.0"
 }
 
 object Library {
