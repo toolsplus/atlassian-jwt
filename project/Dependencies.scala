@@ -28,7 +28,7 @@ object Version {
   val circe = "0.13.0"
   val scalaTest = "3.1.2"
   val scalaCheck = "1.14.3"
-  val scalaTestPlusScalaCheck = "3.1.2.0"
+  val scalaTestPlusScalaCheck = "3.1.4.0"
   val scalaCheckDateTime = "0.3.5"
 }
 
