@@ -27,7 +27,7 @@ object Version {
   val bouncyCastle = "1.67"
   val circe = "0.13.0"
   val scalaTest = "3.1.4"
-  val scalaCheck = "1.15.0"
+  val scalaCheck = "1.15.1"
   val scalaTestPlusScalaCheck = "3.1.4.0"
   val scalaCheckDateTime = "0.4.0"
 }
