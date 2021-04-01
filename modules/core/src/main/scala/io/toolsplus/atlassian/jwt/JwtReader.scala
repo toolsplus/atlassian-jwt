@@ -1,12 +1,10 @@
 package io.toolsplus.atlassian.jwt
 
-import java.time.Instant
-
-import cats.syntax.either._
 import com.nimbusds.jose.crypto.MACVerifier
 import com.nimbusds.jose.{JWSObject, JWSVerifier}
 import com.nimbusds.jwt.JWTClaimsSet
 
+import java.time.Instant
 import scala.util.{Failure, Left, Success, Try}
 
 /**
@@ -23,21 +21,13 @@ case class JwtReader(sharedSecret: String) {
 
   private final val verifier: JWSVerifier = new MACVerifier(sharedSecret)
 
-  def readAndVerify(jwt: String, queryStringHash: String): Either[Error, Jwt] =
-    read(jwt, queryStringHash, shouldVerifySignature = true)
-
-  private def read(jwt: String,
-                   queryStringHash: String,
-                   shouldVerifySignature: Boolean): Either[Error, Jwt] = {
+  def readAndVerify(jwt: String,
+                    queryStringHash: String): Either[Error, Jwt] = {
     JwtParser.parseJWSObject(jwt) match {
       case Right(jwsObject) =>
-        if (shouldVerifySignature) {
-          verifySignature(jwsObject) match {
-            case Right(_)    => verifyRest(jwsObject, queryStringHash)
-            case l @ Left(_) => l.asInstanceOf[Either[Error, Jwt]]
-          }
-        } else {
-          verifyRest(jwsObject, queryStringHash)
+        verifySignature(jwsObject) match {
+          case Right(_)    => verifyRest(jwsObject, queryStringHash)
+          case l @ Left(_) => l.asInstanceOf[Either[Error, Jwt]]
         }
       case l @ Left(_) => l.asInstanceOf[Either[Error, Jwt]]
     }
@@ -167,7 +157,8 @@ case class JwtReader(sharedSecret: String) {
     }
   }
 
-  private def verifySignature(jwsObject: JWSObject): Either[Error, JWSObject] = {
+  private def verifySignature(
+      jwsObject: JWSObject): Either[Error, JWSObject] = {
     Try(jwsObject.verify(verifier)) match {
       case Success(isValid) =>
         if (isValid)
