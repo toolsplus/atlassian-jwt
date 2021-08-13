@@ -1,11 +1,11 @@
 package io.toolsplus.atlassian.jwt
 
 import com.nimbusds.jose.JWSObject
+import com.nimbusds.jose.util.JSONObjectUtils
 import com.nimbusds.jwt.JWTClaimsSet
-import net.minidev.json.JSONObject
 import org.scalacheck.Gen._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class JwtParserSpec extends TestSpec {
 
@@ -13,20 +13,19 @@ class JwtParserSpec extends TestSpec {
 
     "given a valid JWT string" should {
 
-      "successfully parse a JWT" in forAll(signedJwtStringGen()) { token =>
+      "successfully parse a JWT" in forAll(signedSymmetricJwtStringGen()) { token =>
         JwtParser.parse(token) match {
           case Right(jwt) => jwt mustBe a[Jwt]
           case Left(_) => fail
         }
       }
 
-      "successfully parse a JWSObject" in forAll(signedJwtStringGen()) {
+      "successfully parse a JWSObject" in forAll(signedSymmetricJwtStringGen()) {
         token =>
           JwtParser.parseJWSObject(token) match {
-            case Right(jwsObject) => {
+            case Right(jwsObject) =>
               jwsObject mustBe a[JWSObject]
               jwsObject.serialize() mustBe token
-            }
             case Left(_) => fail
           }
       }
@@ -34,10 +33,9 @@ class JwtParserSpec extends TestSpec {
       "successfully parse JWTClaimsSet" in forAll(jwtClaimsSetGen()) {
         claims =>
           JwtParser.parseJWTClaimsSet(claims.toJSONObject) match {
-            case Right(parsedClaims) => {
+            case Right(parsedClaims) =>
               parsedClaims mustBe a[JWTClaimsSet]
-              parsedClaims.toJSONObject.toJSONString mustBe claims.toJSONObject.toJSONString
-            }
+              JSONObjectUtils.toJSONString(parsedClaims.toJSONObject) mustBe JSONObjectUtils.toJSONString(claims.toJSONObject)
             case Left(_) => fail
           }
       }
@@ -65,7 +63,7 @@ class JwtParserSpec extends TestSpec {
 
       "fail to parse a JWTClaimSet from a random string" in forAll(alphaStr) {
         claimValue =>
-          val invalidClaims = new JSONObject(Map("exp" -> claimValue).asJava)
+          val invalidClaims = Map[String, Object]("exp" -> claimValue).asJava
           JwtParser.parseJWTClaimsSet(invalidClaims) match {
             case Left(failure) => failure mustBe a[ParsingFailure]
             case Right(c) =>

@@ -1,14 +1,20 @@
 package io.toolsplus.atlassian.jwt
 
-import cats.syntax.either._
 import com.nimbusds.jose.JWSObject
 import com.nimbusds.jwt._
-import net.minidev.json.JSONObject
 
 import scala.util.{Failure, Success, Try}
 
 object JwtParser {
 
+  /**
+    * First tries to parse the JWS object from the given input string. After that tries to parse
+    * the JWT claim set from the JWS object payload. Only succeeds if both the JWS object and the
+    * claim set could be parsed successfully.
+    *
+    * @param input Raw signed JWT payload
+    * @return Either a parsing error or the JWT
+    */
   final def parse(input: String): Either[ParsingFailure, Jwt] =
     for {
       jwsObject <- parseJWSObject(input)
@@ -25,7 +31,7 @@ object JwtParser {
   }
 
   final def parseJWTClaimsSet(
-      json: JSONObject): Either[ParsingFailure, JWTClaimsSet] = {
+      json: java.util.Map[String, Object]): Either[ParsingFailure, JWTClaimsSet] = {
     Try(JWTClaimsSet.parse(json)) match {
       case Success(claims) => Right(claims)
       case Failure(exception) =>

@@ -9,7 +9,7 @@ are identical to regular JWTs with the exception of a few custom claims, such as
 
 ## Quick start
 
-atlassian-jwt is published to Maven Central for cross-built and published for Scala 2.11, 2.12 and 2.13, so you can just add the following to your build:
+atlassian-jwt is published to Maven Central for cross-built and published for Scala 2.12 and 2.13, so you can just add the following to your build:
 
     libraryDependencies += "io.toolsplus" %% "atlassian-jwt" % "x.x.x"
 

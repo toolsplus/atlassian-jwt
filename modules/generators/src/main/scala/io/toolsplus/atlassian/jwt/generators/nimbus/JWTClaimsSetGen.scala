@@ -14,8 +14,8 @@ trait JWTClaimsSetGen {
   def jwtClaimsSetGen(
       customClaims: Seq[(String, Any)] = Seq.empty): Gen[JWTClaimsSet] =
     for {
-      issuer <- Gen.alphaStr suchThat (!_.isEmpty)
-      subject <- Gen.alphaStr suchThat (!_.isEmpty)
+      issuer <- Gen.alphaStr suchThat (_.nonEmpty)
+      subject <- Gen.alphaStr suchThat (_.nonEmpty)
       now = ZonedDateTime.now
       issuedAt <- Gen.const(now).map(t => Date.from(t.toInstant))
       expiration <- genDateTimeWithinRange(now.plusMinutes(5),
