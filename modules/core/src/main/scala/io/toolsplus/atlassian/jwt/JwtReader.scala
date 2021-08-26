@@ -1,159 +1,107 @@
 package io.toolsplus.atlassian.jwt
 
-import com.nimbusds.jose.crypto.MACVerifier
-import com.nimbusds.jose.{JWSObject, JWSVerifier}
+import cats.implicits._
+import com.nimbusds.jose.{Algorithm, JWSObject, JWSVerifier}
 import com.nimbusds.jwt.JWTClaimsSet
+import io.toolsplus.atlassian.jwt.JwtClaimSetVerifiers.ClaimSetVerifier
 
 import java.time.Instant
 import scala.util.{Failure, Left, Success, Try}
 
-/**
-  * JWT Reader to read and verify JWT strings.
-  *
-  * Each reader has to be configured with the shared secret that it will use
-  * to verify JWT signatures.
-  *
-  * NOTE: If the JWT does not include the qsh claim, verification will still succeed.
-  * This is because self-authenticated tokens do not contain the qsh claim.
-  *
-  */
-case class JwtReader(sharedSecret: String) {
+trait JwtReader {
 
-  private final val verifier: JWSVerifier = new MACVerifier(sharedSecret)
+  protected def verifier: JWSVerifier
+  protected def allowedAlgorithm: Algorithm
 
-  def readAndVerify(jwt: String,
-                    queryStringHash: String): Either[Error, Jwt] = {
-    JwtParser.parseJWSObject(jwt) match {
-      case Right(jwsObject) =>
-        verifySignature(jwsObject) match {
-          case Right(_)    => verifyRest(jwsObject, queryStringHash)
-          case l @ Left(_) => l.asInstanceOf[Either[Error, Jwt]]
-        }
-      case l @ Left(_) => l.asInstanceOf[Either[Error, Jwt]]
-    }
-  }
+  /**
+    * Additional JWT claim set verifiers to evaluate during to token verifications, defaults
+    * to none.
+    *
+    * This allows implementing classes to inject extra validations that they may need.
+    *
+    * @return Additional claim set verifiers, none by default.
+    */
+  protected def extraJwtClaimSetVerifiers: Seq[ClaimSetVerifier] = Seq.empty
 
-  private def verifyRest(jwsObject: JWSObject,
-                         queryStringHash: String): Either[Error, Jwt] =
-    JwtParser.parseJWTClaimsSet(jwsObject.getPayload.toJSONObject) match {
-      case Right(claims) =>
-        verifyStandardClaims(claims) match {
-          case Right(_) =>
-            verifyQueryStringHash(claims, queryStringHash) match {
-              case Right(_) =>
-                Right(Jwt(jwsObject, claims))
-              case l @ Left(_) => l.asInstanceOf[Either[Error, Jwt]]
-            }
-          case l @ Left(_) => l.asInstanceOf[Either[Error, Jwt]]
-        }
-      case l @ Left(_) => l.asInstanceOf[Either[Error, Jwt]]
-    }
-
-  private def verifyStandardClaims(
-      claims: JWTClaimsSet): Either[Error, JWTClaimsSet] =
+  /**
+    * Parses the JWT, then validates the token header (signature and algorithm)
+    * and finally validates standard claims, QSH and evaluates any extra claim
+    * set validators.
+    *
+    * @param jwt JWT to read and validate
+    * @param queryStringHash QSH compiled from the request the JWT was attached to
+    * @return Parsed and validated JWT, or a validation error
+    */
+  def readAndVerify(jwt: String, queryStringHash: String): Either[Error, Jwt] =
     for {
-      _ <- validateHasIssueTimeAndExpirationTime(claims)
-      now = Instant.now()
-      _ <- validateExpirationTimeIsAfterNotBefore(claims)
-      _ <- validateNowIsAfterNotBefore(now, claims)
-      _ <- validateNowIsBeforeExpirationTime(now, claims)
-    } yield claims
+      jwsObject <- JwtParser.parseJWSObject(jwt)
+      _ <- verifySignature(jwsObject)
+      _ <- verifyAlgorithm(jwsObject)
+      result <- verifyPayload(jwsObject, queryStringHash)
+    } yield result
 
-  /** Validate that claim set contains issue time and expiration time.
+  /**
+    * Verifies the payload of the JWS object including the query string hash.
     *
-    * @param claims Claim set to validate
-    * @return Either given claim set if successful or JwtInvalidClaimError
+    * @param jwsObject JWS object for which to verify the JWT payload
+    * @param queryStringHash Query string hash associated with the request
+    * @return Verified JWT if verification is successful.
     */
-  private def validateHasIssueTimeAndExpirationTime(
-      claims: JWTClaimsSet): Either[Error, JWTClaimsSet] =
-    if (Option(claims.getIssueTime).isEmpty || Option(claims.getExpirationTime).isEmpty) {
-      Left(JwtInvalidClaimError(
-        "'exp' and 'iat' are required claims. Atlassian JWT does not allow JWTs with unlimited lifetimes."))
-    } else {
-      Right(claims)
-    }
+  private def verifyPayload(jwsObject: JWSObject,
+                            queryStringHash: String): Either[Error, Jwt] =
+    for {
+      claims <- JwtParser.parseJWTClaimsSet(jwsObject.getPayload.toJSONObject)
+      _ <- verifyStandardClaims(claims)
+      _ <- JwtClaimSetVerifiers.queryStringHash(queryStringHash)(claims)
+      _ <- verifyExtraClaims(claims)
+    } yield Jwt(jwsObject, claims)
 
-  /** Validate that claim set expiration time is after 'not before' (nbf) time.
+  /**
+    * Verifies standard JWT claims.
     *
-    * Note that if 'not before' claim is not defined validation is successful.
+    * Note that this will short circuit, i.e. if any validation fails it stops
+    * and returns the first validation error encountered.
     *
-    * @param claims Claim set to validate
-    * @return Either given claim set if successful or JwtInvalidClaimError
+    * @param claims Claims to be validated
+    * @return Validated claim set if success, the first validation error otherwise
     */
-  private def validateExpirationTimeIsAfterNotBefore(
-      claims: JWTClaimsSet): Either[Error, JWTClaimsSet] =
-    if (Option(claims.getNotBeforeTime).isDefined && !claims.getExpirationTime
-          .after(claims.getNotBeforeTime)) {
-      Left(JwtInvalidClaimError(
-        s"The expiration time must be after the not-before time but exp=${claims.getExpirationTime} and nbf=${claims.getNotBeforeTime}"))
-    } else {
-      Right(claims)
-    }
-
-  /** Validate that claim set 'not before' time is before current time.
-    *
-    * Note that if 'not before' claim is not defined validation is successful.
-    *
-    * @param now Current time
-    * @param claims Claim set to validate
-    * @return Either given claim set if successful or JwtTooEarlyError
-    */
-  private def validateNowIsAfterNotBefore(
-      now: Instant,
+  private def verifyStandardClaims(
       claims: JWTClaimsSet): Either[Error, JWTClaimsSet] = {
-    val nowPlusLeeway =
-      now.plusSeconds(JwtReader.TimeClaimLeewaySeconds)
-    if (Option(claims.getNotBeforeTime).isDefined && claims.getNotBeforeTime.toInstant
-          .isAfter(nowPlusLeeway)) {
-      Left(
-        JwtTooEarlyError(claims.getNotBeforeTime.toInstant,
-                         now,
-                         JwtReader.TimeClaimLeewaySeconds))
-    } else {
-      Right(claims)
-    }
+    JwtClaimSetVerifiers
+      .standardClaimVerifiers(Instant.now(), JwtReader.TimeClaimLeewaySeconds)
+      .toList
+      .foldM(claims)((_, verifier) => verifier(claims))
   }
 
-  /** Validate that claim set expiration time is after current time.
+  /**
+    * Verifies any extra claims that may have been injected by the implementing class.
     *
-    * @param now Current time
-    * @param claims Claim set to validate
-    * @return Either given claim set if successful or JwtExpiredError
+    * Note that this will short circuit, i.e. if any validation fails it stops
+    * and returns the first validation error encountered.
+    *
+    * @param claims Claims to be validated
+    * @return Validated claim set if success, the first validation error otherwise
     */
-  private def validateNowIsBeforeExpirationTime(
-      now: Instant,
+  private def verifyExtraClaims(
       claims: JWTClaimsSet): Either[Error, JWTClaimsSet] = {
-    val nowMinusLeeway =
-      now.minusSeconds(JwtReader.TimeClaimLeewaySeconds)
-    if (claims.getExpirationTime.toInstant.isBefore(nowMinusLeeway)) {
-      Left(
-        JwtExpiredError(claims.getExpirationTime.toInstant,
-                        now,
-                        JwtReader.TimeClaimLeewaySeconds))
-    } else {
-      Right(claims)
-    }
+    extraJwtClaimSetVerifiers.toList.foldM(claims)((_, verifier) =>
+      verifier(claims))
   }
 
-  /** Verify query string hash claim if it is present, otherwise assume
-    * successful verification.
+  /**
+    * Verifies that the alg field in the JMS object header matches the allowed algorithm.
     *
-    * @param claims Claim set to verify.
-    * @param queryStringHash Expected query string hash.
-    * @return Either claim set if verification succeeded or Error otherwise.
+    * @param jwsObject JMS object for which to verify the algorithm field
+    * @return Verified JMS object or an error if verification failed
     */
-  private def verifyQueryStringHash(
-      claims: JWTClaimsSet,
-      queryStringHash: String): Either[Error, JWTClaimsSet] = {
-    val maybeExtractedQueryStringHash =
-      Option(claims.getClaim(HttpRequestCanonicalizer.QueryStringHashClaimName))
-    maybeExtractedQueryStringHash match {
-      case Some(extractedQueryStringHash) =>
-        if (queryStringHash != extractedQueryStringHash) {
-          Left(JwtInvalidClaimError(
-            s"Expecting claim '${HttpRequestCanonicalizer.QueryStringHashClaimName}' to have value '$queryStringHash' but instead it has the value '$maybeExtractedQueryStringHash'"))
-        } else Right(claims)
-      case None => Right(claims)
+  private def verifyAlgorithm(
+      jwsObject: JWSObject): Either[Error, JWSObject] = {
+    val algorithm = jwsObject.getHeader.getAlgorithm
+    if (allowedAlgorithm.equals(algorithm)) {
+      Right(jwsObject)
+    } else {
+      Left(JwtInvalidSigningAlgorithmError(
+        s"Expected JWT to be signed with $allowedAlgorithm but it was signed with $algorithm instead"))
     }
   }
 

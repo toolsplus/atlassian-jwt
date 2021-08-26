@@ -29,6 +29,12 @@ final case class JwtTooEarlyError(notBefore: Instant,
       s"leeway seconds is allowed)"
 }
 
+final case class JwtInvalidSigningAlgorithmError(message: String)
+    extends Error
+    with JwtVerificationError {
+  override def getMessage: String = message
+}
+
 /**
   * Indicates that the JWT's signature does not match its contents or the
   * shared secret for the specified issuer.

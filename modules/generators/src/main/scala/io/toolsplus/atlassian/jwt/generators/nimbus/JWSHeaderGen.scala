@@ -6,7 +6,7 @@ import com.nimbusds.jose.{JWSAlgorithm, JWSHeader}
 import org.scalacheck.Gen
 import org.scalacheck.Gen._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 trait JWSHeaderGen {
 
@@ -16,7 +16,16 @@ trait JWSHeaderGen {
   def jwsHeaderGen: Gen[JWSHeader] =
     for {
       alg <- jwsHMACAlgorithmGen
-    } yield jwsHeader(alg)
+    } yield jwsHeader(alg, None)
+
+  /** Returns a JWS header generator with the given algorithm.
+    *
+    * @param algorithm JWS algorithm to set in the header
+    * @return JWS header generator with the given algorithm
+    */
+  def jwsHeaderGen(algorithm: JWSAlgorithm,
+                   keyId: Option[String] = None): Gen[JWSHeader] =
+    jwsHeader(algorithm, keyId)
 
   /** Returns a JWS header generator compatible with the given secret.
     *
@@ -29,12 +38,18 @@ trait JWSHeaderGen {
   def jwsHeaderGen(secret: String): Gen[JWSHeader] =
     for {
       alg <- oneOf(compatibleAlgorithms(secret).toSeq)
-    } yield jwsHeader(alg)
+    } yield jwsHeader(alg, None)
 
-  private def jwsHeader(alg: JWSAlgorithm): JWSHeader =
-    new JWSHeader.Builder(alg).build()
+  private def jwsHeader(alg: JWSAlgorithm, keyId: Option[String]): JWSHeader = {
+    val headerBuilder = new JWSHeader.Builder(alg)
+    keyId.map(headerBuilder.keyID)
+    headerBuilder.build()
+  }
 
   private def compatibleAlgorithms(secret: String): Set[JWSAlgorithm] =
-    MACSigner.getCompatibleAlgorithms(ByteUtils.bitLength(secret.length)).asScala.toSet
+    MACSigner
+      .getCompatibleAlgorithms(ByteUtils.bitLength(secret.length))
+      .asScala
+      .toSet
 
 }

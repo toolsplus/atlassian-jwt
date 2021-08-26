@@ -1,11 +1,11 @@
 package io.toolsplus.atlassian.jwt
 
+import com.nimbusds.jose.util.JSONObjectUtils
+
 import java.time.temporal.ChronoUnit
 import java.time.{Duration, Instant}
 
-import net.minidev.json.JSONObject
-
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object JwtJsonBuilder {
   private[jwt] val DefaultJwtLifetime =
@@ -16,7 +16,7 @@ object JwtJsonBuilder {
 
 class JwtJsonBuilder(val expireAfter: Duration) {
 
-  private final val json = new JSONObject()
+  private final val json = JSONObjectUtils.newJSONObject()
   private val issuedAt: Long = Instant.now.getEpochSecond
 
   withIssuedAt(issuedAt)
@@ -47,7 +47,7 @@ class JwtJsonBuilder(val expireAfter: Duration) {
   def withClaim(name: String, value: AnyRef): JwtJsonBuilder =
     withProperty(name, value)
 
-  def build: String = json.toString
+  def build: String = JSONObjectUtils.toJSONString(json)
 
   def containsClaim(name: String): Boolean = json.containsKey(name)
 
