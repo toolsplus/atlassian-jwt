@@ -16,6 +16,7 @@ lazy val publishSettings = Seq(
   licenses := Seq(
     "Apache 2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0")),
   publishMavenStyle := true,
+  releaseIgnoreUntrackedFiles := true,
   Test / publishArtifact := false,
   pomIncludeRepository := { _ =>
     false
