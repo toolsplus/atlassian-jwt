@@ -3,6 +3,7 @@ import ReleaseTransformations._
 val commonSettings = Seq(
   organization := "io.toolsplus",
   scalaVersion := "2.13.2",
+  versionScheme := Some("early-semver"),
   crossScalaVersions := Seq("2.12.11", "2.13.2"),
   resolvers ++= Seq(
     "Typesafe repository releases" at "https://repo.typesafe.com/typesafe/releases/",
