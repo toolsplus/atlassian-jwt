@@ -1,6 +1,6 @@
 # Atlassian JWT
 
-[![Build Status](https://github.com/toolsplus/atlassian-jwt/workflows/CI/badge.svg)](https://github.com/toolsplus/atlassian-jwt/actions)
+[![Continuous integration](https://github.com/toolsplus/atlassian-jwt/actions/workflows/ci.yml/badge.svg)](https://github.com/toolsplus/atlassian-jwt/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/toolsplus/atlassian-jwt/branch/master/graph/badge.svg)](https://codecov.io/gh/toolsplus/atlassian-jwt)
 [![Maven Central](https://img.shields.io/maven-central/v/io.toolsplus/atlassian-jwt-core_2.13.svg)](https://maven-badges.herokuapp.com/maven-central/io.toolsplus/atlassian-jwt-core_2.12)
 
