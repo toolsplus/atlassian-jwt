@@ -2,13 +2,11 @@ import ReleaseTransformations._
 
 val commonSettings = Seq(
   organization := "io.toolsplus",
-  scalaVersion := "2.13.2",
+  scalaVersion := "2.13.14",
   versionScheme := Some("early-semver"),
-  crossScalaVersions := Seq("2.12.11", "2.13.2"),
-  resolvers ++= Seq(
-    "Typesafe repository releases" at "https://repo.typesafe.com/typesafe/releases/",
-    Resolver.sonatypeRepo("releases")
-  )
+  crossScalaVersions := Seq("2.12.19", "2.13.14"),
+  resolvers ++= Seq(Resolver.typesafeRepo("releases")) ++ Resolver
+    .sonatypeOssRepos("releases")
 )
 
 lazy val publishSettings = Seq(
