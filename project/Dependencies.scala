@@ -22,14 +22,14 @@ object Dependencies {
 }
 
 object Version {
-  val cats = "2.9.0"
-  val nimbusJoseJwt = "9.31"
+  val cats = "2.12.0"
+  val nimbusJoseJwt = "9.39.3"
   val bouncyCastle = "1.70"
-  val circe = "0.14.5"
-  val scalaTest = "3.2.9"
-  val scalaCheck = "1.15.4"
-  val scalaTestPlusScalaCheck = "3.2.9.0"
-  val scalaCheckDateTime = "0.6.0"
+  val circe = "0.14.7"
+  val scalaTest = "3.2.18"
+  val scalaCheck = "1.18.0"
+  val scalaTestPlusScalaCheck = "3.2.18.0"
+  val scalaCheckDateTime = "0.7.0"
 }
 
 object Library {
@@ -41,6 +41,6 @@ object Library {
   val circeOptics = "io.circe" %% "circe-optics" % "0.14.1"
   val scalaTest = "org.scalatest" %% "scalatest" % Version.scalaTest
   val scalaCheck = "org.scalacheck" %% "scalacheck" % Version.scalaCheck
-  val scalaTestPlusCheck = "org.scalatestplus" %% "scalacheck-1-15" % Version.scalaTestPlusScalaCheck
+  val scalaTestPlusCheck = "org.scalatestplus" %% "scalacheck-1-17" % Version.scalaTestPlusScalaCheck
   val scalaCheckDateTime = "com.47deg" %% "scalacheck-toolbox-datetime" % Version.scalaCheckDateTime
 }
