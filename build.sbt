@@ -1,10 +1,9 @@
-import ReleaseTransformations._
+import ReleaseTransformations.*
 
 val commonSettings = Seq(
   organization := "io.toolsplus",
-  scalaVersion := "2.13.14",
+  scalaVersion := "2.13.16",
   versionScheme := Some("early-semver"),
-  crossScalaVersions := Seq("2.12.19", "2.13.14"),
   resolvers ++= Seq(Resolver.typesafeRepo("releases")) ++ Resolver
     .sonatypeOssRepos("releases")
 )
@@ -13,7 +12,8 @@ lazy val publishSettings = Seq(
   releasePublishArtifactsAction := PgpKeys.publishSigned.value,
   homepage := Some(url("https://github.com/toolsplus/atlassian-jwt")),
   licenses := Seq(
-    "Apache 2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0")),
+    "Apache 2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0")
+  ),
   publishMavenStyle := true,
   releaseIgnoreUntrackedFiles := true,
   Test / publishArtifact := false,
@@ -35,10 +35,12 @@ lazy val publishSettings = Seq(
     )
   ),
   developers := List(
-    Developer("tbinna",
-              "Tobias Binna",
-              "tobias.binna@toolsplus.io",
-              url("https://twitter.com/tbinna"))
+    Developer(
+      "tbinna",
+      "Tobias Binna",
+      "tobias.binna@toolsplus.io",
+      url("https://twitter.com/tbinna")
+    )
   )
 )
 
@@ -47,7 +49,8 @@ lazy val noPublishSettings = Seq(
   publishLocal := {},
   publishArtifact := false,
   publishTo := Some(
-    Resolver.file("Unused transient repository", file("target/dummyrepo")))
+    Resolver.file("Unused transient repository", file("target/dummyrepo"))
+  )
 )
 
 releaseProcess := Seq[ReleaseStep](
@@ -79,7 +82,7 @@ lazy val `atlassian-jwt` = project
     `atlassian-jwt-generators`,
     `atlassian-jwt-core`
   )
-  .settings(commonSettings: _*)
+  .settings(commonSettings *)
   .settings(noPublishSettings)
 
 lazy val `atlassian-jwt-api` = project

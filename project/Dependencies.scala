@@ -1,4 +1,4 @@
-import sbt._
+import sbt.*
 
 object Dependencies {
   val core = Seq(
@@ -22,12 +22,12 @@ object Dependencies {
 }
 
 object Version {
-  val cats = "2.12.0"
-  val nimbusJoseJwt = "9.39.3"
+  val cats = "2.13.0"
+  val nimbusJoseJwt = "10.4.1"
   val bouncyCastle = "1.70"
-  val circe = "0.14.7"
-  val scalaTest = "3.2.18"
-  val scalaCheck = "1.18.0"
+  val circe = "0.14.14"
+  val scalaTest = "3.2.19"
+  val scalaCheck = "1.18.1"
   val scalaTestPlusScalaCheck = "3.2.18.0"
   val scalaCheckDateTime = "0.7.0"
 }
@@ -38,7 +38,7 @@ object Library {
   val bouncyCastle = "org.bouncycastle" % "bcpg-jdk15on" % Version.bouncyCastle
   val circeCore = "io.circe" %% "circe-core" % Version.circe
   val circeParser = "io.circe" %% "circe-parser" % Version.circe
-  val circeOptics = "io.circe" %% "circe-optics" % "0.14.1"
+  val circeOptics = "io.circe" %% "circe-optics" % "0.15.1"
   val scalaTest = "org.scalatest" %% "scalatest" % Version.scalaTest
   val scalaCheck = "org.scalacheck" %% "scalacheck" % Version.scalaCheck
   val scalaTestPlusCheck = "org.scalatestplus" %% "scalacheck-1-17" % Version.scalaTestPlusScalaCheck

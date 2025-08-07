@@ -1,6 +1,6 @@
 package io.toolsplus.atlassian.jwt.generators.nimbus
 
-import com.nimbusds.jose.crypto.MACSigner
+import com.nimbusds.jose.crypto.impl.MACProvider
 import com.nimbusds.jose.util.ByteUtils
 import com.nimbusds.jose.{JWSAlgorithm, JWSHeader}
 import org.scalacheck.Gen
@@ -20,20 +20,26 @@ trait JWSHeaderGen {
 
   /** Returns a JWS header generator with the given algorithm.
     *
-    * @param algorithm JWS algorithm to set in the header
-    * @return JWS header generator with the given algorithm
+    * @param algorithm
+    *   JWS algorithm to set in the header
+    * @return
+    *   JWS header generator with the given algorithm
     */
-  def jwsHeaderGen(algorithm: JWSAlgorithm,
-                   keyId: Option[String] = None): Gen[JWSHeader] =
+  def jwsHeaderGen(
+      algorithm: JWSAlgorithm,
+      keyId: Option[String] = None
+  ): Gen[JWSHeader] =
     jwsHeader(algorithm, keyId)
 
   /** Returns a JWS header generator compatible with the given secret.
     *
-    * Based on secret's length only certain signing algorithms can be chosen. This variant only generates headers
-    * which are valid with the given secret.
+    * Based on secret's length only certain signing algorithms can be chosen.
+    * This variant only generates headers which are valid with the given secret.
     *
-    * @param secret Reference secret
-    * @return JWS header generator compatible with the given secret
+    * @param secret
+    *   Reference secret
+    * @return
+    *   JWS header generator compatible with the given secret
     */
   def jwsHeaderGen(secret: String): Gen[JWSHeader] =
     for {
@@ -47,7 +53,7 @@ trait JWSHeaderGen {
   }
 
   private def compatibleAlgorithms(secret: String): Set[JWSAlgorithm] =
-    MACSigner
+    MACProvider
       .getCompatibleAlgorithms(ByteUtils.bitLength(secret.length))
       .asScala
       .toSet
