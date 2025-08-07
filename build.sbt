@@ -1,4 +1,5 @@
 import ReleaseTransformations.*
+import xerial.sbt.Sonatype.sonatypeCentralHost
 
 val commonSettings = Seq(
   organization := "io.toolsplus",
@@ -20,13 +21,8 @@ lazy val publishSettings = Seq(
   pomIncludeRepository := { _ =>
     false
   },
-  publishTo := {
-    val nexus = "https://oss.sonatype.org/"
-    if (isSnapshot.value)
-      Some("snapshots" at nexus + "content/repositories/snapshots")
-    else
-      Some("releases" at nexus + "service/local/staging/deploy/maven2")
-  },
+  ThisBuild / publishTo := sonatypePublishToBundle.value,
+  ThisBuild / sonatypeCredentialHost := sonatypeCentralHost,
   autoAPIMappings := true,
   scmInfo := Some(
     ScmInfo(
@@ -45,6 +41,7 @@ lazy val publishSettings = Seq(
 )
 
 lazy val noPublishSettings = Seq(
+  publish / skip := true,
   publish := {},
   publishLocal := {},
   publishArtifact := false,
@@ -62,9 +59,9 @@ releaseProcess := Seq[ReleaseStep](
   commitReleaseVersion,
   tagRelease,
   releaseStepCommand("publishSigned"),
+  releaseStepCommand("sonatypeBundleRelease"),
   setNextVersion,
   commitNextVersion,
-  releaseStepCommand("sonatypeReleaseAll"),
   pushChanges
 )
 
@@ -82,7 +79,7 @@ lazy val `atlassian-jwt` = project
     `atlassian-jwt-generators`,
     `atlassian-jwt-core`
   )
-  .settings(commonSettings *)
+  .settings(commonSettings)
   .settings(noPublishSettings)
 
 lazy val `atlassian-jwt-api` = project
