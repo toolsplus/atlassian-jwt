@@ -16,7 +16,7 @@ class JwtParserSpec extends TestSpec {
       "successfully parse a JWT" in forAll(signedSymmetricJwtStringGen()) { token =>
         JwtParser.parse(token) match {
           case Right(jwt) => jwt mustBe a[Jwt]
-          case Left(_) => fail
+          case Left(_) => fail()
         }
       }
 
@@ -26,7 +26,7 @@ class JwtParserSpec extends TestSpec {
             case Right(jwsObject) =>
               jwsObject mustBe a[JWSObject]
               jwsObject.serialize() mustBe token
-            case Left(_) => fail
+            case Left(_) => fail()
           }
       }
 
@@ -36,7 +36,7 @@ class JwtParserSpec extends TestSpec {
             case Right(parsedClaims) =>
               parsedClaims mustBe a[JWTClaimsSet]
               JSONObjectUtils.toJSONString(parsedClaims.toJSONObject) mustBe JSONObjectUtils.toJSONString(claims.toJSONObject)
-            case Left(_) => fail
+            case Left(_) => fail()
           }
       }
 

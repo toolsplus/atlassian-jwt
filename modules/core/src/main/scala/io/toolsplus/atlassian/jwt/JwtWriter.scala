@@ -1,14 +1,12 @@
 package io.toolsplus.atlassian.jwt
 
-import cats.syntax.either._
 import com.nimbusds.jose._
 
 import scala.util.{Failure, Success, Try}
 
-/**
-  * JWT Writer to write valid Atlassian compatible JWTs.
+/** JWT Writer to write valid Atlassian compatible JWTs.
   *
-  * Each writer has to be configured with the [[JWSAlgorithm]]  and [[JWSSigner]]
+  * Each writer has to be configured with the [[JWSAlgorithm]] and [[JWSSigner]]
   * that will be used sign the token.
   */
 case class JwtWriter(algorithm: JWSAlgorithm, signer: JWSSigner) {
@@ -23,7 +21,7 @@ case class JwtWriter(algorithm: JWSAlgorithm, signer: JWSSigner) {
 
     val jwsObject = new JWSObject(header, new Payload(payload))
     Try(jwsObject.sign(signer)) match {
-      case Success(_) => Right(jwsObject)
+      case Success(_)         => Right(jwsObject)
       case Failure(exception) =>
         Left(JwtSigningError(exception.getMessage, exception))
     }

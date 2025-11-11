@@ -8,7 +8,7 @@ import io.toolsplus.atlassian.jwt.generators.util.JwtTestHelper
 import org.scalacheck.Gen._
 import org.scalatest.Assertion
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class JwtBuilderSpec extends TestSpec {
 
@@ -48,8 +48,8 @@ class JwtBuilderSpec extends TestSpec {
 
       "successfully create JWT claims with overridden issue time" in {
         val expireAfter = Duration.of(10, ChronoUnit.SECONDS)
-        val expectedIssuedAt = Instant.now plus Duration.of(5,
-                                                            ChronoUnit.SECONDS)
+        val expectedIssuedAt =
+          Instant.now plus Duration.of(5, ChronoUnit.SECONDS)
         val result = new JwtBuilder(expireAfter)
           .withIssuedAt(expectedIssuedAt.getEpochSecond)
           .build(JwtTestHelper.defaultSigningSecret)
@@ -126,8 +126,9 @@ class JwtBuilderSpec extends TestSpec {
 
   }
 
-  private def validate(assertion: Jwt => Assertion)(
-      result: Either[JwtSigningError, RawJwt]) = {
+  private def validate(
+      assertion: Jwt => Assertion
+  )(result: Either[JwtSigningError, RawJwt]) = {
     result match {
       case Right(rawJwt) =>
         JwtParser.parse(rawJwt) match {
