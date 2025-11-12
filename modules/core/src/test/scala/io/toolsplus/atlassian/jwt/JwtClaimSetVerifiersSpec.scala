@@ -13,15 +13,16 @@ class JwtClaimSetVerifiersSpec extends TestSpec with EitherValues {
     "hasIssueTimeAndExpirationTime" should {
 
       "succeed if claims have issue time (iat) and expiry (exp)" in forAll(
-        jwtClaimsSetGen()) { claims =>
+        jwtClaimsSetGen()
+      ) { claims =>
         JwtClaimSetVerifiers
           .hasIssueTimeAndExpirationTime(claims)
-          .right
           .value mustBe a[JWTClaimsSet]
       }
 
       "fail if issue time (iat) is missing" in forAll(
-        jwtClaimsSetGen(Seq("iat" -> null))) { claims =>
+        jwtClaimsSetGen(Seq("iat" -> null))
+      ) { claims =>
         JwtClaimSetVerifiers
           .hasIssueTimeAndExpirationTime(claims)
           .left
@@ -29,7 +30,8 @@ class JwtClaimSetVerifiersSpec extends TestSpec with EitherValues {
       }
 
       "fail if issue time (exp) is missing" in forAll(
-        jwtClaimsSetGen(Seq("exp" -> null))) { claims =>
+        jwtClaimsSetGen(Seq("exp" -> null))
+      ) { claims =>
         JwtClaimSetVerifiers
           .hasIssueTimeAndExpirationTime(claims)
           .left
@@ -44,23 +46,24 @@ class JwtClaimSetVerifiersSpec extends TestSpec with EitherValues {
       val expDate = Date.from(now.plusMinutes(5).toInstant)
 
       "succeed if expiry (exp) is after not before (nbf) time" in forAll(
-        jwtClaimsSetGen(Seq("nbf" -> nowDate, "exp" -> expDate))) { claims =>
+        jwtClaimsSetGen(Seq("nbf" -> nowDate, "exp" -> expDate))
+      ) { claims =>
         JwtClaimSetVerifiers
           .expirationTimeIsAfterNotBefore(claims)
-          .right
           .value mustBe a[JWTClaimsSet]
       }
 
       "succeed if not before (nbf) is missing" in forAll(
-        jwtClaimsSetGen(Seq("nbf" -> null))) { claims =>
+        jwtClaimsSetGen(Seq("nbf" -> null))
+      ) { claims =>
         JwtClaimSetVerifiers
           .expirationTimeIsAfterNotBefore(claims)
-          .right
           .value mustBe a[JWTClaimsSet]
       }
 
       "fail if expiry (exp) is missing" in forAll(
-        jwtClaimsSetGen(Seq("exp" -> null, "nbf" -> nowDate))) { claims =>
+        jwtClaimsSetGen(Seq("exp" -> null, "nbf" -> nowDate))
+      ) { claims =>
         JwtClaimSetVerifiers
           .expirationTimeIsAfterNotBefore(claims)
           .left
@@ -68,7 +71,8 @@ class JwtClaimSetVerifiersSpec extends TestSpec with EitherValues {
       }
 
       "fail if expiry (exp) is earlier than not before (nbf) time" in forAll(
-        jwtClaimsSetGen(Seq("exp" -> nowDate, "nbf" -> expDate))) { claims =>
+        jwtClaimsSetGen(Seq("exp" -> nowDate, "nbf" -> expDate))
+      ) { claims =>
         JwtClaimSetVerifiers
           .expirationTimeIsAfterNotBefore(claims)
           .left
@@ -86,17 +90,20 @@ class JwtClaimSetVerifiersSpec extends TestSpec with EitherValues {
         JwtClaimSetVerifiers.nowIsAfterNotBefore(now.toInstant, 30)
 
       "succeed if current time is after not before (nbf) time" in forAll(
-        jwtClaimsSetGen(Seq("nbf" -> fiveMinutesAgo))) { claims =>
-        validator(claims).right.value mustBe a[JWTClaimsSet]
+        jwtClaimsSetGen(Seq("nbf" -> fiveMinutesAgo))
+      ) { claims =>
+        validator(claims).value mustBe a[JWTClaimsSet]
       }
 
       "succeed if not before (nbf) is missing" in forAll(
-        jwtClaimsSetGen(Seq("nbf" -> null))) { claims =>
-        validator(claims).right.value mustBe a[JWTClaimsSet]
+        jwtClaimsSetGen(Seq("nbf" -> null))
+      ) { claims =>
+        validator(claims).value mustBe a[JWTClaimsSet]
       }
 
       "fail if expiry (exp) is earlier than not before (nbf) time" in forAll(
-        jwtClaimsSetGen(Seq("nbf" -> inFiveMinutes))) { claims =>
+        jwtClaimsSetGen(Seq("nbf" -> inFiveMinutes))
+      ) { claims =>
         validator(claims).left.value mustBe a[JwtTooEarlyError]
       }
     }
@@ -111,17 +118,20 @@ class JwtClaimSetVerifiersSpec extends TestSpec with EitherValues {
         JwtClaimSetVerifiers.nowIsBeforeExpirationTime(now.toInstant, 30)
 
       "succeed if current time is before expiry (exp) time" in forAll(
-        jwtClaimsSetGen(Seq("exp" -> inFiveMinutes))) { claims =>
-        validator(claims).right.value mustBe a[JWTClaimsSet]
+        jwtClaimsSetGen(Seq("exp" -> inFiveMinutes))
+      ) { claims =>
+        validator(claims).value mustBe a[JWTClaimsSet]
       }
 
       "fail if expiry (exp) time is missing" in forAll(
-        jwtClaimsSetGen(Seq("exp" -> null))) { claims =>
+        jwtClaimsSetGen(Seq("exp" -> null))
+      ) { claims =>
         validator(claims).left.value mustBe a[JwtInvalidClaimError]
       }
 
       "fail if current time is after expiry (exp) time" in forAll(
-        jwtClaimsSetGen(Seq("exp" -> fiveMinutesAgo))) { claims =>
+        jwtClaimsSetGen(Seq("exp" -> fiveMinutesAgo))
+      ) { claims =>
         validator(claims).left.value mustBe a[JwtExpiredError]
       }
     }
@@ -134,17 +144,20 @@ class JwtClaimSetVerifiersSpec extends TestSpec with EitherValues {
         JwtClaimSetVerifiers.queryStringHash(qsh)
 
       "succeed if qsh claim matches expected qsh" in forAll(
-        jwtClaimsSetGen(Seq("qsh" -> qsh))) { claims =>
-        validator(claims).right.value mustBe a[JWTClaimsSet]
+        jwtClaimsSetGen(Seq("qsh" -> qsh))
+      ) { claims =>
+        validator(claims).value mustBe a[JWTClaimsSet]
       }
 
       "succeed if qsh claim is missing" in forAll(
-        jwtClaimsSetGen(Seq("qsh" -> null))) { claims =>
-        validator(claims).right.value mustBe a[JWTClaimsSet]
+        jwtClaimsSetGen(Seq("qsh" -> null))
+      ) { claims =>
+        validator(claims).value mustBe a[JWTClaimsSet]
       }
 
       "fail if qsh claim does not match expected qsh" in forAll(
-        jwtClaimsSetGen(Seq("qsh" -> "non-matching-qsh"))) { claims =>
+        jwtClaimsSetGen(Seq("qsh" -> "non-matching-qsh"))
+      ) { claims =>
         validator(claims).left.value mustBe a[JwtInvalidClaimError]
       }
 

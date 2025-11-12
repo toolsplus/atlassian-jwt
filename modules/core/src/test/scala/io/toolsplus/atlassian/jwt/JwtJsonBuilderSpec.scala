@@ -38,10 +38,10 @@ class JwtJsonBuilderSpec extends TestSpec {
           val expectedExpiry = Instant.now plusSeconds defaultLifetime
           issuedAt
             .getOption(json)
-            .getOrElse(fail) mustBe now.getEpochSecond +- toleranceSeconds
+            .getOrElse(fail()) mustBe now.getEpochSecond +- toleranceSeconds
           expiry
             .getOption(json)
-            .getOrElse(fail) mustBe expectedExpiry.getEpochSecond +- leewaySeconds
+            .getOrElse(fail()) mustBe expectedExpiry.getEpochSecond +- leewaySeconds
         }
 
         validate(assertion)(result)
@@ -55,7 +55,7 @@ class JwtJsonBuilderSpec extends TestSpec {
           val expectedExpiry = Instant.now plus expireAfter
           expiry
             .getOption(json)
-            .getOrElse(fail) mustBe expectedExpiry.getEpochSecond +- toleranceSeconds
+            .getOrElse(fail()) mustBe expectedExpiry.getEpochSecond +- toleranceSeconds
         }
 
         validate(assertion)(result)
@@ -72,7 +72,7 @@ class JwtJsonBuilderSpec extends TestSpec {
         def assertion(json: Json) = {
           expiry
             .getOption(json)
-            .getOrElse(fail) mustBe expectedExpiry.getEpochSecond +- toleranceSeconds
+            .getOrElse(fail()) mustBe expectedExpiry.getEpochSecond +- toleranceSeconds
         }
 
         validate(assertion)(result)
@@ -88,7 +88,7 @@ class JwtJsonBuilderSpec extends TestSpec {
         def assertion(json: Json) = {
           issuedAt
             .getOption(json)
-            .getOrElse(fail) mustBe expectedIssueTime +- toleranceSeconds
+            .getOrElse(fail()) mustBe expectedIssueTime +- toleranceSeconds
         }
 
         validate(assertion)(result)
@@ -99,7 +99,7 @@ class JwtJsonBuilderSpec extends TestSpec {
           val result = JwtJsonBuilder().withAudience(expectedAudience).build
 
           def assertion(json: Json) = {
-            audience.getOption(json).getOrElse(fail) mustBe expectedAudience
+            audience.getOption(json).getOrElse(fail()) mustBe expectedAudience
           }
 
           validate(assertion)(result)
@@ -111,7 +111,7 @@ class JwtJsonBuilderSpec extends TestSpec {
           val result = JwtJsonBuilder().withIssuer(expectedIssuer).build
 
           def assertion(json: Json) = {
-            issuer.getOption(json).getOrElse(fail) mustBe expectedIssuer
+            issuer.getOption(json).getOrElse(fail()) mustBe expectedIssuer
           }
 
           validate(assertion)(result)
@@ -123,7 +123,7 @@ class JwtJsonBuilderSpec extends TestSpec {
           val result = JwtJsonBuilder().withJwtId(expectedJwtId).build
 
           def assertion(json: Json) = {
-            jwtId.getOption(json).getOrElse(fail) mustBe expectedJwtId
+            jwtId.getOption(json).getOrElse(fail()) mustBe expectedJwtId
           }
 
           validate(assertion)(result)
@@ -141,7 +141,7 @@ class JwtJsonBuilderSpec extends TestSpec {
         def assertion(json: Json) = {
           notBefore
             .getOption(json)
-            .getOrElse(fail) mustBe expectedNotBefore.getEpochSecond +- toleranceSeconds
+            .getOrElse(fail()) mustBe expectedNotBefore.getEpochSecond +- toleranceSeconds
         }
 
         validate(assertion)(result)
@@ -152,7 +152,7 @@ class JwtJsonBuilderSpec extends TestSpec {
           val result = JwtJsonBuilder().withSubject(expectedSubject).build
 
           def assertion(json: Json) = {
-            subject.getOption(json).getOrElse(fail) mustBe expectedSubject
+            subject.getOption(json).getOrElse(fail()) mustBe expectedSubject
           }
 
           validate(assertion)(result)
@@ -164,7 +164,7 @@ class JwtJsonBuilderSpec extends TestSpec {
           val result = JwtJsonBuilder().withType(expectedType).build
 
           def assertion(json: Json) = {
-            `type`.getOption(json).getOrElse(fail) mustBe expectedType
+            `type`.getOption(json).getOrElse(fail()) mustBe expectedType
           }
 
           validate(assertion)(result)
@@ -176,7 +176,7 @@ class JwtJsonBuilderSpec extends TestSpec {
           val result = JwtJsonBuilder().withQueryHash(expectedQsh).build
 
           def assertion(json: Json) = {
-            queryStringHash.getOption(json).getOrElse(fail) mustBe expectedQsh
+            queryStringHash.getOption(json).getOrElse(fail()) mustBe expectedQsh
           }
 
           validate(assertion)(result)
@@ -190,7 +190,7 @@ class JwtJsonBuilderSpec extends TestSpec {
           def assertion(json: Json) = {
             customClaim(claimName)
               .getOption(json)
-              .getOrElse(fail) mustBe claimValue
+              .getOrElse(fail()) mustBe claimValue
           }
 
           validate(assertion)(result)

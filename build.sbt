@@ -3,10 +3,13 @@ import xerial.sbt.Sonatype.sonatypeCentralHost
 
 val commonSettings = Seq(
   organization := "io.toolsplus",
-  scalaVersion := "2.13.16",
+  scalaVersion := "3.3.6",
   versionScheme := Some("early-semver"),
-  resolvers ++= Seq(Resolver.typesafeRepo("releases")) ++ Resolver
-    .sonatypeOssRepos("releases")
+  resolvers ++= Seq(
+    Resolver.typesafeRepo("releases"),
+    Resolver
+      .sonatypeCentralRepo("releases")
+  )
 )
 
 lazy val publishSettings = Seq(

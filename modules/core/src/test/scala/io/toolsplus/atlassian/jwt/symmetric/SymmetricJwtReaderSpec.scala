@@ -177,7 +177,7 @@ class SymmetricJwtReaderSpec extends TestSpec {
           SymmetricJwtReader(signingSecret)
             .readAndVerify(token, invalidQsh) match {
             case Left(failure) => failure mustBe a[JwtVerificationError]
-            case Right(_)      => fail
+            case Right(_)      => fail()
           }
         }
       }
@@ -190,7 +190,7 @@ class SymmetricJwtReaderSpec extends TestSpec {
           SymmetricJwtReader(signingSecret)
             .readAndVerify(token, queryHash) match {
             case Left(failure) => failure mustBe a[ParsingFailure]
-            case Right(_)      => fail
+            case Right(_)      => fail()
           }
         }
       }
@@ -206,7 +206,7 @@ class SymmetricJwtReaderSpec extends TestSpec {
             SymmetricJwtReader(signingSecret)
               .readAndVerify(token.dropRight(5), queryHash) match {
               case Left(failure) => failure mustBe a[JwtSignatureMismatchError]
-              case Right(_)      => fail
+              case Right(_)      => fail()
             }
         }
       }
