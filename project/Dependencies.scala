@@ -23,13 +23,14 @@ object Dependencies {
 
 object Version {
   val cats = "2.13.0"
-  val nimbusJoseJwt = "10.5"
-  val bouncyCastle = "1.81"
-  val circe = "0.14.14"
+  val nimbusJoseJwt = "10.8"
+  val bouncyCastle = "1.83"
+  val circe = "0.14.15"
   val scalaTest = "3.2.19"
   val scalaCheck = "1.19.0"
-  val scalaTestPlusScalaCheck = "3.2.18.0"
+  val scalaTestPlusScalaCheck = "3.2.19.0"
   val scalaCheckDateTime = "0.7.0"
+  val circeOptics = "0.15.1"
 }
 
 object Library {
@@ -38,11 +39,11 @@ object Library {
   val bouncyCastle = "org.bouncycastle" % "bcpg-jdk18on" % Version.bouncyCastle
   val circeCore = "io.circe" %% "circe-core" % Version.circe
   val circeParser = "io.circe" %% "circe-parser" % Version.circe
-  val circeOptics = "io.circe" %% "circe-optics" % "0.15.1"
+  val circeOptics = "io.circe" %% "circe-optics" % Version.circeOptics
   val scalaTest = "org.scalatest" %% "scalatest" % Version.scalaTest
   val scalaCheck = "org.scalacheck" %% "scalacheck" % Version.scalaCheck
   val scalaTestPlusCheck =
-    "org.scalatestplus" %% "scalacheck-1-17" % Version.scalaTestPlusScalaCheck
+    "org.scalatestplus" %% "scalacheck-1-19" % Version.scalaTestPlusScalaCheck
   val scalaCheckDateTime =
     "com.47deg" %% "scalacheck-toolbox-datetime" % Version.scalaCheckDateTime
 }
