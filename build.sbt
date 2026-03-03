@@ -3,7 +3,7 @@ import xerial.sbt.Sonatype.sonatypeCentralHost
 
 val commonSettings = Seq(
   organization := "io.toolsplus",
-  scalaVersion := "3.3.6",
+  scalaVersion := "3.3.7",
   versionScheme := Some("early-semver"),
   resolvers ++= Seq(
     Resolver.typesafeRepo("releases"),
